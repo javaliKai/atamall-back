@@ -6,6 +6,7 @@ const userRoutes = require('./routes/userRoutes.js');
 const authRoutes = require('./routes/authRoutes.js');
 const orderRoutes = require('./routes/orderRoutes.js');
 const productRoutes = require('./routes/productRoutes.js');
+const cartRoutes = require('./routes/cartRoutes.js');
 
 // DB CONNECTION
 connectDb();
@@ -18,6 +19,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/product', productRoutes);
+app.use('/api/cart', cartRoutes);
 
 // ERROR MIDDLEWARE
 app.use((err, req, res, next) => {

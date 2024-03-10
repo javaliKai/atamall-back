@@ -4,6 +4,8 @@ const User = require('../models/User');
 const Address = require('../models/Address');
 const Wishlist = require('../models/Wishlist');
 const Product = require('../models/Product');
+const Cart = require('../models/Cart');
+const mongoose = require('mongoose');
 
 exports.getAllUser = async (req, res, next) => {
   try {

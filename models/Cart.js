@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 
-const OrderSchema = new mongoose.Schema({
+const CartSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: 'user',
   },
   products: [
     {
@@ -34,28 +33,6 @@ const OrderSchema = new mongoose.Schema({
       },
     },
   ],
-  totalPrice: {
-    type: Number,
-    required: true,
-  },
-  paymentMethod: {
-    type: String,
-    enum: ['alipay', 'wechat', 'credit card'],
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ['finished', 'cancelled', 'processing', 'delivering', 'delivered'],
-    required: true,
-  },
-  orderDate: {
-    type: Date,
-    default: Date.now(),
-  },
-  finishedDate: {
-    type: Date,
-    default: null,
-  },
 });
 
-module.exports = PurchaseHistory = mongoose.model('order', OrderSchema);
+module.exports = Cart = mongoose.model('cart', CartSchema);

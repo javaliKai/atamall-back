@@ -6,10 +6,10 @@ const { body } = require('express-validator');
 
 /**
  * @route   /api/order/
- * @desc    Get all orders
- * @access  Dev
+ * @desc    Get all user orders
+ * @access  Private
  */
-router.get('/', orderController.getAllOrders);
+router.get('/', auth, orderController.getUserOrders);
 
 /**
  * @route   /api/order/
@@ -21,23 +21,19 @@ router.post(
   auth,
   [
     body('products').isArray(),
-    body('products').custom((products) => products.length >= 1),
-    body('totalPrice').notEmpty().isNumeric(),
-    body('status').notEmpty(),
-    body('status')
-      .custom(
-        (status) =>
-          status === 'finished' ||
-          status === 'failed' ||
-          status === 'processing' ||
-          status === 'delivering' ||
-          status === 'delivered'
-      )
-      .withMessage(
-        'Invalid status value, should be either finished, failed, processing, delivering, or delivered.'
-      ),
+    body('products')
+      .custom((products) => products.length >= 1)
+      .withMessage('Order cannot be empty.'),
+    body('paymentMethod').trim().notEmpty(),
   ],
   orderController.createOrder
 );
+
+/**
+ * @route   /api/order/cancel/:orderId
+ * @desc    Cancel an order
+ * @access  Private
+ */
+router.put('/cancel/:orderId', auth, orderController.cancelOrder);
 
 module.exports = router;
