@@ -65,4 +65,11 @@ router.put(
   cartController.removeItem
 );
 
+/**
+ * @route   /api/cart
+ * @desc    Empty the cart
+ * @access  Private
+ */
+router.delete('/', auth, cartController.emptyCart);
+
 module.exports = router;

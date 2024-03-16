@@ -199,3 +199,14 @@ exports.removeItem = async (req, res, next) => {
     return next(error);
   }
 };
+
+exports.emptyCart = async (req, res, next) => {
+  try {
+    await Cart.deleteOne({ userId: req.userId });
+    const userCart = await Cart.findOne({ userId: req.userId });
+    return res.status(200).send({ userCart });
+  } catch (error) {
+    console.error('Error while emptying cart: ', error);
+    return next(error);
+  }
+};
