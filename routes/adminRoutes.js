@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
+const auth = require('../middleware/authMiddleware');
+const checkAdmin = require('../middleware/adminMiddleware');
 const adminController = require('../controller/adminController');
 
 /**
- * @route   /api/user/
- * @desc    Create a new user
- * @access  Public
+ * @route   /api/admin/
+ * @desc    Create a new user -- admin
+ * @access  Private
  */
 router.post(
   '/',
@@ -24,3 +26,67 @@ router.post(
   ],
   adminController.createAdmin
 );
+
+/**
+ * @route   /api/admin/product
+ * @desc    Add a new product
+ * @access  Private
+ */
+router.post(
+  '/product',
+  auth,
+  checkAdmin,
+  [
+    body('title').trim().notEmpty(),
+    body('price').notEmpty().isNumeric(),
+    body('description').trim().notEmpty(),
+    body('category').trim().notEmpty(),
+    body('image').trim().notEmpty(),
+  ],
+  adminController.createProduct
+);
+
+/**
+ * @route   /api/admin/product/:productId
+ * @desc    Add a new product
+ * @access  Private
+ */
+router.delete(
+  '/product/:productId',
+  auth,
+  checkAdmin,
+  adminController.deleteProduct
+);
+
+/**
+ * @route   /api/admin/product/:productId
+ * @desc    Edit a product
+ * @access  Private
+ */
+router.put(
+  '/product/:productId',
+  auth,
+  checkAdmin,
+  [
+    body('title').trim().notEmpty(),
+    body('price').notEmpty().isNumeric(),
+    body('description').trim().notEmpty(),
+    body('category').trim().notEmpty(),
+    body('image').trim().notEmpty(),
+  ],
+  adminController.updateProduct
+);
+
+/**
+ * @route   /api/admin/order/:orderId/deliver
+ * @desc    Change the order state to 'delivering'
+ * @access  Private
+ */
+router.put(
+  '/order/:orderId/deliver',
+  auth,
+  checkAdmin,
+  adminController.deliverOrder
+);
+
+module.exports = router;

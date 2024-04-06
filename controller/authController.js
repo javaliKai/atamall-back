@@ -33,6 +33,7 @@ exports.signIn = async (req, res, next) => {
     const payload = {
       userId: user.id,
       email: user.email,
+      role: user.role,
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, {

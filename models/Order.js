@@ -43,6 +43,24 @@ const OrderSchema = new mongoose.Schema({
     enum: ['alipay', 'wechat', 'credit card'],
     required: true,
   },
+  shippingAddress: {
+    country: {
+      type: String,
+      required: true,
+    },
+    province: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
+    detail: {
+      type: String,
+      required: true,
+    },
+  },
   status: {
     type: String,
     enum: ['finished', 'cancelled', 'processing', 'delivering', 'delivered'],

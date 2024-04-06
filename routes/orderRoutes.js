@@ -36,4 +36,11 @@ router.post(
  */
 router.put('/cancel/:orderId', auth, orderController.cancelOrder);
 
+/**
+ * @route   /api/order/finish/:orderId
+ * @desc    Finish an order
+ * @access  Private
+ */
+router.put('/finish/:orderId', auth, orderController.finishOrder);
+
 module.exports = router;

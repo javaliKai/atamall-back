@@ -3,7 +3,13 @@ const Order = require('../models/Order');
 
 exports.getUserOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ userId: req.userId });
+    // if admin, then give all orders
+    let orders;
+    if (req.role === 'admin') {
+      orders = await Order.find();
+    } else {
+      orders = await Order.find({ userId: req.userId });
+    }
     return res.status(200).send({ orders });
   } catch (error) {
     console.error('Error getting user orders: ', error);
@@ -20,19 +26,21 @@ exports.createOrder = async (req, res, next) => {
     }
 
     const userId = req.userId;
-    const { products, paymentMethod } = req.body;
+    const { products, paymentMethod, shippingAddress } = req.body;
 
     // calculate total price
     let totalPrice = 0;
     products.forEach((product) => {
-      totalPrice += parseFloat(product.price).toFixed(2);
+      totalPrice += product.price;
     });
+    totalPrice = totalPrice.toFixed(2);
 
     const newOrder = new Order({
       userId,
       products,
       totalPrice,
       paymentMethod,
+      shippingAddress,
       status: 'processing',
     });
 
@@ -63,6 +71,28 @@ exports.cancelOrder = async (req, res, next) => {
     return res.status(200).send({ order });
   } catch (error) {
     console.error('Error cancelling order: ', error);
+    next(error);
+  }
+};
+
+exports.finishOrder = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      const error = new Error('No order found with id ' + orderId);
+      error.status = 422;
+      return next(error);
+    }
+
+    order.status = 'finished';
+    order.finishedDate = new Date();
+    await order.save();
+
+    return res.status(200).send({ order });
+  } catch (error) {
+    console.error('Error finishing order: ', error);
     next(error);
   }
 };

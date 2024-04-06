@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const connectDb = require('./util/db.js');
 const userRoutes = require('./routes/userRoutes.js');
+const adminRoutes = require('./routes/adminRoutes.js');
 const authRoutes = require('./routes/authRoutes.js');
 const orderRoutes = require('./routes/orderRoutes.js');
 const productRoutes = require('./routes/productRoutes.js');
@@ -16,6 +17,7 @@ app.use(express.json()); // parsing req body to json data
 
 // API ROUTES
 app.use('/api/user', userRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/product', productRoutes);

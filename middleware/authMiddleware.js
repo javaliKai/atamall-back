@@ -31,6 +31,7 @@ const auth = (req, res, next) => {
       return next(error);
     } else {
       req.userId = decodedToken.userId;
+      req.role = decodedToken.role;
       next();
     }
   } catch (error) {
