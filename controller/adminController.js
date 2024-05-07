@@ -81,7 +81,7 @@ exports.deleteProduct = async (req, res, next) => {
 
     return res.status(200).json({ deleteResult });
   } catch (error) {
-    console.error('Error creating new product: ', error);
+    console.error('Error deleting product: ', error);
     next(error);
   }
 };
@@ -115,7 +115,7 @@ exports.updateProduct = async (req, res, next) => {
 
     return res.status(200).json({ updatedProduct: product });
   } catch (error) {
-    console.error('Error creating new product: ', error);
+    console.error('Error updating product: ', error);
     next(error);
   }
 };
@@ -138,7 +138,72 @@ exports.deliverOrder = async (req, res, next) => {
 
     return res.status(200).json({ order });
   } catch (error) {
-    console.error('Error creating new product: ', error);
+    console.error('Error while delivering order: ', error);
+    next(error);
+  }
+};
+
+exports.getAnalytics = async (req, res, next) => {
+  try {
+    // Get all compeleted orders
+    const completedOrders = await Order.find({ status: 'finished' });
+
+    // Caclulate parameters:  Items sold, revenue, most sold category, most sold product
+    let totalItemsSold = 0;
+    let revenue = 0;
+    const soldCategory = {};
+    const soldProduct = {};
+
+    completedOrders.forEach((order) => {
+      order.products.forEach((product) => {
+        totalItemsSold += product.quantity;
+        // calculate category sold
+        if (!soldCategory[product.category]) {
+          soldCategory[product.category] = 1 * product.quantity;
+        } else {
+          soldCategory[product.category] += 1 * product.quantity;
+        }
+
+        // calculate product sold
+        if (!soldProduct[product.title]) {
+          soldProduct[product.title] = 1 * product.quantity;
+        } else {
+          soldProduct[product.title] += 1 * product.quantity;
+        }
+      });
+      revenue += order.totalPrice;
+    });
+    // Accept only 2 digits floating point
+    revenue = Math.round(revenue * 100) / 100;
+
+    // Calculate most sold category and products
+    let mostSoldCategory = undefined;
+    let maxSoldCat = 0;
+    for (const category in soldCategory) {
+      if (soldCategory[category] > maxSoldCat) {
+        mostSoldCategory = category;
+        maxSoldCat = soldCategory[category];
+      }
+    }
+    let mostSoldProduct = undefined;
+    let maxSoldProd = 0;
+    for (const product in soldProduct) {
+      if (soldProduct[product] > maxSoldProd) {
+        mostSoldProduct = product;
+        maxSoldProd = soldProduct[product];
+      }
+    }
+
+    return res.status(200).json({
+      totalItemsSold,
+      revenue,
+      soldCategory,
+      mostSoldCategory,
+      soldProduct,
+      mostSoldProduct,
+    });
+  } catch (error) {
+    console.error('Error while getting analytics: ', error);
     next(error);
   }
 };

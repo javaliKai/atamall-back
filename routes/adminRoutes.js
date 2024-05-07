@@ -89,4 +89,11 @@ router.put(
   adminController.deliverOrder
 );
 
+/**
+ * @route   /api/admin/analytics/
+ * @desc    Get the sales analytics
+ * @access  Private
+ */
+router.get('/analytics', auth, checkAdmin, adminController.getAnalytics);
+
 module.exports = router;
